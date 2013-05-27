@@ -97,3 +97,53 @@ This example also aliased
 
     $ grunt
 to run "zip" and then "phonegap-build" for you.
+
+### To unlock a certificate key
+If the build requires signing, another task is available to unlock its key, to be performed before, for example:
+
+    $ grunt phonegapBuildUnlockKey phonegap-build
+
+Additional configuration is required:
+
+ 1. ```key.id```: The Key ID of the uploaded signing key on build.phonegap.com.
+ 2. ```key.platform```: The platform the key refers to, i.e. ios, android, etc.
+ 3. ```key.password```:  The password to unlock the key, if left out a prompt will let you enter it from the command line.
+ 4. ```user```: authentication like in the *phonegap-build* task, with user and password or just token.
+ 5. ```timeout```: (optional, default: 5 seconds) a timeout for the connection to build.phonegap.com.
+ 
+**Note:** This is a multitask also, so you can specify different configurations for example for every platform you need.
+
+Here is an example for a Gruntfile.js:
+
+    module.exports = function(grunt) {
+
+      // Project configuration.
+      grunt.initConfig({
+        phonegapBuildUnlockKey: {
+          ios: {
+            options: {
+              key: {
+                id: "5678",
+                platform: "ios"
+              },
+              user: {
+                token: "1234567ABCDEFGHI"
+              }
+            }
+          },
+        },
+ 		"phonegap-build": ...,
+ 		zip: ...
+      });
+
+	  // Load tasks.
+	  grunt.loadNpmTasks('grunt-zipstream');
+	  grunt.loadNpmTasks('grunt-phonegap-build');
+
+	  // Default task.
+	  grunt.registerTask('default', 'zip phonegapBuildUnlockKey phonegap-build');
+	};
+
+##Reference
+
+PhoneGap API documents: <https://build.phonegap.com/docs/api>
